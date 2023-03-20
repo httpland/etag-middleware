@@ -5,10 +5,9 @@ import { isString, RepresentationHeader } from "./deps.ts";
 import { stringify } from "./etag.ts";
 import type { CalculateETag } from "./types.ts";
 
-/**
+/** Response with `ETag` header field.
  * @param response Response
- * @param calculate Function to calculate hash values. The data is passed the actual response body value.
- * @returns
+ * @param calculate Function to calculate ETag values.
  */
 export async function withEtag(
   response: Response,
