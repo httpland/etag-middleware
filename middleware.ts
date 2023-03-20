@@ -10,7 +10,7 @@ import { CalculateETag } from "./types.ts";
  *
  * @example
  * ```ts
- * import { etag } from "https://deno.land/x/http_etag@$VERSION/mod.ts";
+ * import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
  * import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
  *
  * const middleware = etag();

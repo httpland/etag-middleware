@@ -24,7 +24,7 @@ For a definition of Universal HTTP middleware, see the
 From the response, calculate the ETag and add it to the `ETag` header.
 
 ```ts
-import { etag } from "https://deno.land/x/http_etag@$VERSION/mod.ts";
+import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag();
