@@ -15,15 +15,15 @@ export interface ETagStrategy {
    */
   readonly strong: boolean;
 
-  /** Compute digest.
-   * The default is SHA-1 digest.
-   */
-  readonly digest: Digest;
-
   /** Semantically significant header related with the representation data.
    * @default ["content-type"]
    */
   readonly headers: readonly string[];
+
+  /** Compute digest.
+   * The default is SHA-1 digest.
+   */
+  readonly digest: Digest;
 }
 
 /** Compute digest API. */
