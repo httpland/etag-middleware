@@ -1,3 +1,11 @@
+# [1.0.0-beta.4](https://github.com/httpland/etag-middleware/compare/1.0.0-beta.3...1.0.0-beta.4) (2023-03-21)
+
+
+### Features
+
+* **mod:** export types of interface ([ba22f4b](https://github.com/httpland/etag-middleware/commit/ba22f4b8fe1e7d0c10e659a33901355a4a2a112b))
+* **types:** change etag strategy interface ([813aad5](https://github.com/httpland/etag-middleware/commit/813aad5853e0c4293fbeb51928ea61325f6a3a5a))
+
 # [1.0.0-beta.3](https://github.com/httpland/etag-middleware/compare/1.0.0-beta.2...1.0.0-beta.3) (2023-03-21)
 
 
