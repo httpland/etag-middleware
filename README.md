@@ -33,19 +33,112 @@ const response = await middleware(
   (request) => new Response("ok"),
 );
 
-assertEquals(response.headers.get("etag"), `"<hex:SHA-1:body>"`);
+assertEquals(
+  response.headers.get("etag"),
+  `W/"<hex:SHA-1:Content-Type::body>"`,
+);
 ```
 
 yield:
 
 ```http
-ETag: W/"<hex:SHA-1:body>"
+ETag: W/"<hex:SHA-1:Content-Type::body>"
 ```
 
-The Default ETag is a hexadecimal representation of the sha-1 digest of the
-Response body.
+The Default ETag is a hexadecimal representation of the SHA-1 digest of the
+response body and `Content-Type`.
 
-This is a weak ETag.
+This is a weak validator.
+
+## ETag computation
+
+The ETag is computed from the body and the response header.
+
+By default, it is a hash of the stream of body and specific headers.
+
+This satisfies most of the requirements for a strong validator. However, no
+single middleware can guarantee that the following
+[requirements](https://www.rfc-editor.org/rfc/rfc9110#section-8.8.1-9) will be
+met:
+
+> For example, if the origin server sends the same validator for a
+> representation with a gzip content coding applied as it does for a
+> representation with no content coding, then that validator is weak.
+
+For this reason, the default is to compute as a weak validator.
+
+## ETag Strategy
+
+ETag computation strategy.
+
+| Name      | Type                                                               | Default            | Description                                                           |
+| --------- | ------------------------------------------------------------------ | ------------------ | --------------------------------------------------------------------- |
+| weak      | `boolean`                                                          | `true`             | Wether the etag is weak or not.                                       |
+| algorithm | `"SHA-1"` &vert; `"SHA-256"` &vert; `"SHA-384"` &vert; `"SHA-512"` | `"SHA-1"`          | Hash algorithm.                                                       |
+| headers   | `string[]`                                                         | `["content-type"]` | Semantically significant header related with the representation data. |
+
+### Weak
+
+The `weak` field specifies whether ETag is a weak validator or not.
+
+Middleware by itself cannot guarantee that it is a strong validator.
+
+This is because the body and `Content-Encoding` can be changed by other
+processes after the ETag computing.
+
+If immutability can be guaranteed, it can be changed to a strong validator.
+
+```ts
+import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+
+const middleware = etag({ weak: false });
+declare const request: Request;
+declare const handler: () => Response;
+
+const response = await middleware(request, handler);
+assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type::body>"`);
+```
+
+### Algorithm
+
+Specifies the algorithm of the hash function. Default is `SHA-1`.
+
+```ts
+import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+
+const middleware = etag({ algorithm: "SHA-256" });
+declare const request: Request;
+declare const handler: () => Response;
+
+const response = await middleware(request, handler);
+assertEquals(
+  response.headers.get("etag"),
+  `W/"<hex:SHA-256:Content-Type::body>"`,
+);
+```
+
+### Headers
+
+Additional metadata to uniquely identify representation data.
+
+Default is `["content-type"]`.
+
+The strong validator requires uniqueness to include metadata such as
+`Content-Type` in addition to the body text.
+
+By adding a header, a hash value is computed from the stream of the body and the
+specified header.
+
+```ts
+import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+
+const middleware = etag({ headers: [] });
+declare const request: Request;
+declare const handler: () => Response;
+
+const response = await middleware(request, handler);
+assertEquals(response.headers.get("etag"), `W/"<hex:SHA-256:body>"`);
+```
 
 ## Effects
 
