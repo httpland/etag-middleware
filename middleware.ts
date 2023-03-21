@@ -10,16 +10,22 @@ import { ETagStrategy } from "./types.ts";
  *
  * @example
  * ```ts
- * import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+ * import {
+ *   etag,
+ *   type Handler,
+ * } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
  * import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
  *
  * const middleware = etag();
- * const response = await middleware(
- *   new Request("http://localhost"),
- *   (request) => new Response("ok"),
- * );
+ * declare const request: Request;
+ * declare const handler: Handler;
  *
- * assertEquals(response.headers.get("etag"), `"<hex:SHA-1:body>"`);
+ * const response = await middleware(request, handler);
+ *
+ * assertEquals(
+ *   response.headers.get("etag"),
+ *   `W/"<hex:SHA-1:Content-Type,body>"`,
+ * );
  * ```
  */
 export function etag(strategy?: Partial<ETagStrategy>): Middleware {

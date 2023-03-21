@@ -38,7 +38,7 @@ const response = await middleware(request, handler);
 
 assertEquals(
   response.headers.get("etag"),
-  `W/"<hex:SHA-1:Content-Type::body>"`,
+  `W/"<hex:SHA-1:Content-Type,body>"`,
 );
 ```
 
@@ -106,7 +106,7 @@ declare const request: Request;
 declare const handler: Handler;
 
 const response = await middleware(request, handler);
-assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type::body>"`);
+assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type,body>"`);
 ```
 
 ### Headers
@@ -164,7 +164,7 @@ declare const handler: Handler;
 const response = await middleware(request, handler);
 assertEquals(
   response.headers.get("etag"),
-  `W/"<hex:SHA-256:Content-Type::body>"`,
+  `W/"<hex:SHA-256:Content-Type,body>"`,
 );
 ```
 
