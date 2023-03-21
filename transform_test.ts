@@ -12,7 +12,7 @@ import { withEtag } from "./transform.ts";
 
 describe("withEtag", () => {
   it("should return with etag header field if the response does not have etag field", async () => {
-    const digest = spy(() => `""`);
+    const digest = spy(() => `""` as const);
     const initResponse = new Response("ok");
     const response = await withEtag(initResponse, digest);
 
@@ -66,7 +66,7 @@ describe("withEtag", () => {
 
   it("should return same response if the response status code is not 2xx", async () => {
     const initResponse = new Response("", { status: 404 });
-    const digest = spy(() => "");
+    const digest = spy(() => `""` as const);
 
     const response = await withEtag(initResponse, digest);
 
@@ -76,7 +76,7 @@ describe("withEtag", () => {
 
   it("should return same response if the response body does not exist", async () => {
     const initResponse = new Response();
-    const digest = spy(() => "");
+    const digest = spy(() => `""` as const);
 
     const response = await withEtag(initResponse, digest);
 
@@ -86,7 +86,7 @@ describe("withEtag", () => {
 
   it("should return same response if the response has been read", async () => {
     const initResponse = new Response("ok");
-    const digest = spy(() => "");
+    const digest = spy(() => `""` as const);
 
     await initResponse.text();
     const response = await withEtag(initResponse, digest);
@@ -100,7 +100,7 @@ describe("withEtag", () => {
     const initResponse = new Response("ok", {
       headers: { [RepresentationHeader.ETag]: "" },
     });
-    const digest = spy(() => "");
+    const digest = spy(() => `""` as const);
 
     const response = await withEtag(initResponse, digest);
 

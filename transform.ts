@@ -1,8 +1,7 @@
 // Copyright 2023-latest the httpland authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { isString, RepresentationHeader } from "./deps.ts";
-import { stringify } from "./etag.ts";
+import { isString, RepresentationHeader, stringify } from "./deps.ts";
 import type { CalculateETag } from "./types.ts";
 
 /** Response with `ETag` header field.

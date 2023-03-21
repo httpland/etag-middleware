@@ -1,7 +1,7 @@
 // Copyright 2023-latest the httpland authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { toHashString } from "./deps.ts";
+import { type ETag, toHashString } from "./deps.ts";
 
 /** Catch error utility. */
 export function reason(
@@ -13,30 +13,17 @@ export function reason(
   };
 }
 
-/** Return quoted string. */
-export function quoted<T extends string>(input: T): `"${T}"`;
-export function quoted(input: string): string;
-export function quoted(input: string): string {
-  return `"${input}"`;
-}
-
-export function weakPrefix<T extends string>(input: T): `W/${T}`;
-export function weakPrefix(input: string): `W/${string}`;
-export function weakPrefix(input: string): `W/${string}` {
-  return `W/${input}`;
-}
-
-export function weakETag(response: Response): Promise<string> {
-  return response
+export async function weakETag(response: Response): Promise<ETag> {
+  const tag = await response
     .clone()
     .arrayBuffer()
     .catch(reason(FailBy.Fetch))
     .then(digestSha1)
     .catch(reason(FailBy.CalcHash))
     .then(toHashString)
-    .catch(reason(FailBy.CalcHashString))
-    .then(quoted)
-    .then(weakPrefix);
+    .catch(reason(FailBy.CalcHashString));
+
+  return { tag, weak: true };
 }
 
 export function digestSha1(data: ArrayBuffer): Promise<ArrayBuffer> {

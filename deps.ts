@@ -10,3 +10,8 @@ export {
 export {
   RepresentationHeader,
 } from "https://deno.land/x/http_utils@1.0.0-beta.13/header.ts";
+export {
+  type ETag,
+  type ETagFormat,
+  stringify,
+} from "https://deno.land/x/etag_parser@1.0.0/mod.ts";
