@@ -111,12 +111,11 @@ assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type::body>"`);
 
 ### Headers
 
-Additional metadata to uniquely identify representation data.
-
-Default is `["content-type"]`.
+Additional metadata to uniquely identify representation data. Default is
+`["content-type"]`.
 
 The strong validator requires uniqueness to include metadata such as
-`Content-Type` in addition to the body text.
+`Content-Type` in addition to the body.
 
 By adding a header, a hash value is computed from the stream of the body and the
 specified header.
