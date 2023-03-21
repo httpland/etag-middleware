@@ -79,7 +79,7 @@ ETag computation strategy.
 
 ### Strong
 
-The `weak` field specifies whether the validator is strong or not.
+The `strong` field specifies whether the validator is strong or not.
 
 Middleware cannot guarantee that it is a strong validator.
 
