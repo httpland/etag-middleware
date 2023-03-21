@@ -45,7 +45,7 @@ assertEquals(
 yield:
 
 ```http
-ETag: W/"<hex:SHA-1:Content-Type::body>"
+ETag: W/"<hex:SHA-1:Content-Type,body>"
 ```
 
 The Default ETag is a hexadecimal representation of the SHA-1 digest of the
