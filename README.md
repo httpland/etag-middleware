@@ -28,10 +28,10 @@ import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag();
-const response = await middleware(
-  new Request("http://localhost"),
-  (request) => new Response("ok"),
-);
+declare const request: Request;
+declare const handler: () => Response;
+
+const response = await middleware(request, handler);
 
 assertEquals(
   response.headers.get("etag"),
@@ -90,6 +90,7 @@ If immutability can be guaranteed, it can be changed to a strong validator.
 
 ```ts
 import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({ weak: false });
 declare const request: Request;
@@ -105,6 +106,7 @@ Specifies the algorithm of the hash function. Default is `SHA-1`.
 
 ```ts
 import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({ algorithm: "SHA-256" });
 declare const request: Request;
@@ -131,6 +133,7 @@ specified header.
 
 ```ts
 import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({ headers: [] });
 declare const request: Request;
