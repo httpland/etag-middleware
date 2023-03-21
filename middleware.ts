@@ -19,7 +19,7 @@ import { CalculateETag } from "./types.ts";
  *   (request) => new Response("ok"),
  * );
  *
- * assertEquals(response.headers.get("etag"), `"<body:SHA-1>"`);
+ * assertEquals(response.headers.get("etag"), `"<hex:SHA-1:body>"`);
  * ```
  */
 export function etag(calculateETag?: CalculateETag): Middleware {
