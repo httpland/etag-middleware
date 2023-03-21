@@ -51,5 +51,9 @@ export const makeOptions = (version: string): BuildOptions => ({
       name: "@httpland/http-utils",
       version: "1.0.0-beta.13",
     },
+    "https://deno.land/x/etag_parser@1.0.0/mod.ts": {
+      name: "@httpland/etag-parser",
+      version: "1.0.0",
+    },
   },
 });
