@@ -10,15 +10,15 @@ export interface ComputeETag {
 
 /** ETag computation strategy. */
 export interface ETagStrategy {
-  /** Wether the etag is weak or not.
-   * @default true
+  /** Whether the validator is strong or not.
+   * @default false
    */
-  readonly weak: boolean;
+  readonly strong: boolean;
 
-  /** Hash algorithm.
-   * @default `SHA-1`
+  /** Compute digest.
+   * The default is SHA-1 digest.
    */
-  readonly algorithm: Algorithm;
+  readonly digest: Digest;
 
   /** Semantically significant header related with the representation data.
    * @default ["content-type"]
@@ -26,5 +26,7 @@ export interface ETagStrategy {
   readonly headers: readonly string[];
 }
 
-/** Hash algorithm */
-export type Algorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
+/** Compute digest API. */
+export interface Digest {
+  (data: ArrayBuffer): ArrayBuffer | Promise<ArrayBuffer>;
+}

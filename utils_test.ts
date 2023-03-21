@@ -1,4 +1,3 @@
-import { ETagStrategy } from "./types.ts";
 import {
   computeETagByStrategy,
   filterHeaders,
@@ -6,12 +5,12 @@ import {
   stringifyHeaders,
 } from "./utils.ts";
 import {
-  assert,
   assertEquals,
+  assertSpyCalls,
   assertThrows,
   describe,
-  distinct,
   it,
+  spy,
 } from "./_dev_deps.ts";
 
 describe("reason", () => {
@@ -87,29 +86,50 @@ describe("filterHeaders", () => {
 });
 
 describe("computeETagByStrategy", () => {
-  it("should return unique hash tag", async () => {
-    const table: [Response, ETagStrategy | undefined][] = [
-      [new Response(""), undefined],
-      [new Response(), undefined],
-      [new Response("a"), undefined],
-      [new Response("a"), { headers: [], algorithm: "SHA-1", weak: false }],
-      [new Response("a"), { headers: [], algorithm: "SHA-256", weak: false }],
-      [new Response("a"), { headers: [], algorithm: "SHA-384", weak: false }],
-      [new Response("a"), { headers: [], algorithm: "SHA-512", weak: true }],
-    ];
+  it("should pass body only if the header is none", async () => {
+    const digest = spy((data: ArrayBuffer) => {
+      assertEquals(
+        new TextDecoder().decode(data),
+        "a",
+      );
 
-    const results = await Promise.all(
-      table.map(async ([response, strategy]) => {
-        const result = await computeETagByStrategy(response, strategy);
+      return new ArrayBuffer(0);
+    });
 
-        assertEquals(result.weak, strategy?.weak ?? true);
+    const etag = await computeETagByStrategy(new Response("a"), {
+      digest,
+      strong: false,
+      headers: [],
+    });
 
-        return result;
-      }),
-    );
+    assertSpyCalls(digest, 1);
+    assertEquals(etag, { weak: true, tag: "" });
+  });
 
-    const tags = results.map(({ tag }) => tag);
+  it("should pass header and body stream", async () => {
+    const digest = spy((data: ArrayBuffer) => {
+      assertEquals(
+        new TextDecoder().decode(data),
+        "content-type: text/plain;charset=UTF-8\n\na",
+      );
 
-    assert(distinct(tags).length === results.length);
+      return new ArrayBuffer(0);
+    });
+
+    const etag = await computeETagByStrategy(new Response("a"), {
+      digest,
+      strong: true,
+      headers: ["content-type"],
+    });
+
+    assertSpyCalls(digest, 1);
+    assertEquals(etag, { weak: false, tag: "" });
+  });
+
+  it("should pass header and body stream by default", async () => {
+    const etag = await computeETagByStrategy(new Response("abc"));
+    const etagc = "52d3e27d9e12c76aa045b5d72bab675df54df141";
+
+    assertEquals(etag, { weak: true, tag: etagc });
   });
 });

@@ -71,11 +71,11 @@ For this reason, the default is to compute as a weak validator.
 
 ETag computation strategy.
 
-| Name      | Type                                                               | Default            | Description                                                           |
-| --------- | ------------------------------------------------------------------ | ------------------ | --------------------------------------------------------------------- |
-| strong    | `boolean`                                                          | `false`            | Whether the validator is strong or not.                               |
-| algorithm | `"SHA-1"` &vert; `"SHA-256"` &vert; `"SHA-384"` &vert; `"SHA-512"` | `"SHA-1"`          | Hash algorithm.                                                       |
-| headers   | `string[]`                                                         | `["content-type"]` | Semantically significant header related with the representation data. |
+| Name    | Type       | Default            | Description                                                           |
+| ------- | ---------- | ------------------ | --------------------------------------------------------------------- |
+| strong  | `boolean`  | `false`            | Whether the validator is strong or not.                               |
+| headers | `string[]` | `["content-type"]` | Semantically significant header related with the representation data. |
+| digest  | `Digest`   | SHA-1 digest       | Compute digest.                                                       |
 
 ### Strong
 
@@ -103,25 +103,6 @@ const response = await middleware(request, handler);
 assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type::body>"`);
 ```
 
-### Algorithm
-
-Specifies the algorithm of the hash function. Default is `SHA-1`.
-
-```ts
-import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-
-const middleware = etag({ algorithm: "SHA-256" });
-declare const request: Request;
-declare const handler: () => Response;
-
-const response = await middleware(request, handler);
-assertEquals(
-  response.headers.get("etag"),
-  `W/"<hex:SHA-256:Content-Type::body>"`,
-);
-```
-
 ### Headers
 
 Additional metadata to uniquely identify representation data.
@@ -144,6 +125,36 @@ declare const handler: () => Response;
 
 const response = await middleware(request, handler);
 assertEquals(response.headers.get("etag"), `W/"<hex:SHA-256:body>"`);
+```
+
+### Digest
+
+Specifies digest function. Default is `digestSha1`.
+
+```ts
+function digestSha1(data: ArrayBuffer): Promise<ArrayBuffer> {
+  return crypto.subtle.digest("SHA-1", data);
+}
+```
+
+`data` is an `ArrayBuffer` that concatenates the headers specified in
+[headers](#headers) and body.
+
+```ts
+import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+
+const middleware = etag({
+  digest: (data) => crypto.subtle.digest("SHA-256", data),
+});
+declare const request: Request;
+declare const handler: () => Response;
+
+const response = await middleware(request, handler);
+assertEquals(
+  response.headers.get("etag"),
+  `W/"<hex:SHA-256:Content-Type::body>"`,
+);
 ```
 
 ## Effects

@@ -7,7 +7,7 @@ import {
   RepresentationHeader,
 } from "./_dev_deps.ts";
 
-const opaqueTag = `"389222d4f438ac48dac58e8594ab32279bf5ed4b"`;
+const opaqueTag = `"6b4f9b34cb268809e4863aea74e2c81b54c847dc"`;
 
 describe("etag", () => {
   it("should return response what include etag header", async () => {
@@ -31,7 +31,7 @@ describe("etag", () => {
   });
 
   it("should change to strong validator", async () => {
-    const middleware = etag({ weak: false });
+    const middleware = etag({ strong: true });
     const response = await middleware(
       new Request("test:"),
       () => new Response(""),
@@ -48,21 +48,18 @@ describe("etag", () => {
     );
   });
 
-  it("should change hash algorithm", async () => {
-    const middleware = etag({ algorithm: "SHA-256" });
+  it("should change digest function", async () => {
+    const middleware = etag({ digest: () => new ArrayBuffer(0) });
     const response = await middleware(
       new Request("test:"),
       () => new Response(""),
     );
 
-    const opaqueTag =
-      `"186c92e7522aa3bb7bc51063c389b3b53e34d89ae00aa41e80956144bc188f5e"`;
-
     assert(
       await equalsResponse(
         response,
         new Response("", {
-          headers: { [RepresentationHeader.ETag]: "W/" + opaqueTag },
+          headers: { [RepresentationHeader.ETag]: `W/""` },
         }),
         true,
       ),

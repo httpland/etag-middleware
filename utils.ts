@@ -26,9 +26,13 @@ const enum FailBy {
   CalcHashString = "fail to calculate hash string",
 }
 
+function digestSha1(data: ArrayBuffer): Promise<ArrayBuffer> {
+  return crypto.subtle.digest("SHA-1", data);
+}
+
 export const DefaultStrategy: ETagStrategy = {
-  weak: true,
-  algorithm: "SHA-1",
+  strong: false,
+  digest: digestSha1,
   headers: [RepresentationHeader.ContentType],
 };
 
@@ -38,6 +42,7 @@ export async function computeETagByStrategy(
 ): Promise<ETag> {
   const filteredHeaders = filterHeaders(response.headers, strategy.headers);
   const headersStr = stringifyHeaders(filteredHeaders);
+  const hasHeader = !!headersStr;
 
   const buffer = await response
     .clone()
@@ -45,15 +50,16 @@ export async function computeETagByStrategy(
     .catch(reason(FailBy.Fetch));
   const data = concat(
     new TextEncoder().encode(headersStr),
+    ...hasHeader ? [new TextEncoder().encode("\n\n")] : [],
     new Uint8Array(buffer),
   );
 
-  const tag = await crypto.subtle.digest(strategy.algorithm, data)
+  const tag = await Promise.resolve(strategy.digest(data.buffer))
     .catch(reason(FailBy.CalcHash))
     .then(toHashString)
     .catch(reason(FailBy.CalcHashString));
 
-  return { weak: strategy.weak, tag };
+  return { weak: !strategy.strong, tag };
 }
 
 export function strategy2ComputeETag(strategy: ETagStrategy): ComputeETag {

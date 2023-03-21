@@ -3,4 +3,4 @@
 
 export { type Handler, type Middleware } from "./deps.ts";
 export { etag } from "./middleware.ts";
-export type { Algorithm, ETagStrategy } from "./types.ts";
+export type { ETagStrategy } from "./types.ts";
