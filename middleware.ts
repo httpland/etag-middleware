@@ -3,8 +3,8 @@
 
 import { type Middleware } from "./deps.ts";
 import { withEtag } from "./transform.ts";
-import { weakETag } from "./utils.ts";
-import { CalculateETag } from "./types.ts";
+import { DefaultStrategy, strategy2ComputeETag } from "./utils.ts";
+import { ETagStrategy } from "./types.ts";
 
 /** Create `ETag` header middleware.
  *
@@ -22,12 +22,12 @@ import { CalculateETag } from "./types.ts";
  * assertEquals(response.headers.get("etag"), `"<hex:SHA-1:body>"`);
  * ```
  */
-export function etag(calculateETag?: CalculateETag): Middleware {
-  const calculate = calculateETag ?? weakETag;
+export function etag(strategy?: Partial<ETagStrategy>): Middleware {
+  const compute = strategy2ComputeETag({ ...DefaultStrategy, ...strategy });
 
   return async (request, next) => {
     const response = await next(request);
 
-    return withEtag(response, calculate);
+    return withEtag(response, compute);
   };
 }

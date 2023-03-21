@@ -15,3 +15,4 @@ export {
   type ETagFormat,
   stringify,
 } from "https://deno.land/x/etag_parser@1.0.0/mod.ts";
+export { concat } from "https://deno.land/std@0.180.0/bytes/concat.ts";

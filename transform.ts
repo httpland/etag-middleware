@@ -2,7 +2,7 @@
 // This module is browser compatible.
 
 import { isString, RepresentationHeader, stringify } from "./deps.ts";
-import type { CalculateETag } from "./types.ts";
+import type { ComputeETag } from "./types.ts";
 
 /** Response with `ETag` header field.
  * @param response Response
@@ -10,7 +10,7 @@ import type { CalculateETag } from "./types.ts";
  */
 export async function withEtag(
   response: Response,
-  calculate: CalculateETag,
+  calculate: ComputeETag,
 ): Promise<Response> {
   if (
     !response.ok ||
