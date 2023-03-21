@@ -24,12 +24,15 @@ For a definition of Universal HTTP middleware, see the
 From the response, calculate the ETag and add it to the `ETag` header.
 
 ```ts
-import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import {
+  etag,
+  type Handler,
+} from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag();
 declare const request: Request;
-declare const handler: () => Response;
+declare const handler: Handler;
 
 const response = await middleware(request, handler);
 
@@ -92,12 +95,15 @@ If you can guarantee that this situation will not occur, you can change to
 strong validator.
 
 ```ts
-import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import {
+  etag,
+  type Handler,
+} from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({ strong: true });
 declare const request: Request;
-declare const handler: () => Response;
+declare const handler: Handler;
 
 const response = await middleware(request, handler);
 assertEquals(response.headers.get("etag"), `"<hex:SHA-1:Content-Type::body>"`);
@@ -116,12 +122,15 @@ By adding a header, a hash value is computed from the stream of the body and the
 specified header.
 
 ```ts
-import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import {
+  etag,
+  type Handler,
+} from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({ headers: [] });
 declare const request: Request;
-declare const handler: () => Response;
+declare const handler: Handler;
 
 const response = await middleware(request, handler);
 assertEquals(response.headers.get("etag"), `W/"<hex:SHA-256:body>"`);
@@ -141,14 +150,17 @@ function digestSha1(data: ArrayBuffer): Promise<ArrayBuffer> {
 [headers](#headers) and body.
 
 ```ts
-import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
+import {
+  etag,
+  type Handler,
+} from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 const middleware = etag({
   digest: (data) => crypto.subtle.digest("SHA-256", data),
 });
 declare const request: Request;
-declare const handler: () => Response;
+declare const handler: Handler;
 
 const response = await middleware(request, handler);
 assertEquals(
