@@ -56,8 +56,8 @@ The ETag is computed from the body and the response header.
 
 By default, it is a hash of the stream of body and specific headers.
 
-This satisfies most of the requirements for a strong validator. However, no
-single middleware can guarantee that the following
+This satisfies most of the requirements for a strong validator. However,
+middleware cannot guarantee that the following
 [requirements](https://www.rfc-editor.org/rfc/rfc9110#section-8.8.1-9) will be
 met:
 
@@ -73,26 +73,29 @@ ETag computation strategy.
 
 | Name      | Type                                                               | Default            | Description                                                           |
 | --------- | ------------------------------------------------------------------ | ------------------ | --------------------------------------------------------------------- |
-| weak      | `boolean`                                                          | `true`             | Wether the etag is weak or not.                                       |
+| strong    | `boolean`                                                          | `false`            | Whether the validator is strong or not.                               |
 | algorithm | `"SHA-1"` &vert; `"SHA-256"` &vert; `"SHA-384"` &vert; `"SHA-512"` | `"SHA-1"`          | Hash algorithm.                                                       |
 | headers   | `string[]`                                                         | `["content-type"]` | Semantically significant header related with the representation data. |
 
-### Weak
+### Strong
 
-The `weak` field specifies whether ETag is a weak validator or not.
+The `weak` field specifies whether the validator is strong or not.
 
-Middleware by itself cannot guarantee that it is a strong validator.
+Middleware cannot guarantee that it is a strong validator.
 
 This is because the body and `Content-Encoding` can be changed by other
 processes after the ETag computing.
 
-If immutability can be guaranteed, it can be changed to a strong validator.
+In that case, the ETag must be recomputed.
+
+If you can guarantee that this situation will not occur, you can change to
+strong validator.
 
 ```ts
 import { etag } from "https://deno.land/x/etag_middleware@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
-const middleware = etag({ weak: false });
+const middleware = etag({ strong: true });
 declare const request: Request;
 declare const handler: () => Response;
 
