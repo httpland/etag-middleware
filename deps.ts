@@ -8,6 +8,7 @@ export {
   type Middleware,
 } from "https://deno.land/x/http_middleware@1.0.0/mod.ts";
 export {
+  filterKeys,
   RepresentationHeader,
 } from "https://deno.land/x/http_utils@1.0.0/header.ts";
 export {

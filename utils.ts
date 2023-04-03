@@ -4,7 +4,7 @@
 import {
   concat,
   type ETag,
-  isString,
+  filterKeys,
   RepresentationHeader,
   toHashString,
 } from "./deps.ts";
@@ -26,8 +26,13 @@ const enum FailBy {
   CalcHashString = "fail to calculate hash string",
 }
 
+/** Digest algorithm. */
+const enum Algorithm {
+  Sha1 = "SHA-1",
+}
+
 function digestSha1(data: ArrayBuffer): Promise<ArrayBuffer> {
-  return crypto.subtle.digest("SHA-1", data);
+  return crypto.subtle.digest(Algorithm.Sha1, data);
 }
 
 export const DefaultStrategy: ETagStrategy = {
@@ -40,17 +45,21 @@ export async function computeETagByStrategy(
   response: Response,
   strategy: ETagStrategy = DefaultStrategy,
 ): Promise<ETag> {
-  const filteredHeaders = filterHeaders(response.headers, strategy.headers);
+  const filteredHeaders = filterKeys(
+    response.headers,
+    strategy.headers.includes.bind(strategy.headers),
+  );
   const headersStr = stringifyHeaders(filteredHeaders);
   const hasHeader = !!headersStr;
+  const encoder = new TextEncoder();
 
   const buffer = await response
     .clone()
     .arrayBuffer()
     .catch(reason(FailBy.Fetch));
   const data = concat(
-    new TextEncoder().encode(headersStr),
-    ...hasHeader ? [new TextEncoder().encode("\n\n")] : [],
+    encoder.encode(headersStr),
+    ...hasHeader ? [encoder.encode("\n\n")] : [],
     new Uint8Array(buffer),
   );
 
@@ -75,18 +84,4 @@ export function stringifyHeaders(headers: Headers): string {
 
 function formatEntry(entry: readonly [unknown, unknown]): string {
   return `${entry[0]}: ${entry[1]}`;
-}
-
-/** Filter header. */
-export function filterHeaders(
-  headers: Headers,
-  fields: readonly string[],
-): Headers {
-  const entries = fields.map((field) => {
-    const value = headers.get(field);
-
-    return isString(value) ? [field, value] as const : undefined;
-  }).filter(Boolean) as [string, string][];
-
-  return new Headers(entries);
 }
