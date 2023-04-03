@@ -1,9 +1,4 @@
-import {
-  computeETagByStrategy,
-  filterHeaders,
-  reason,
-  stringifyHeaders,
-} from "./utils.ts";
+import { computeETagByStrategy, reason, stringifyHeaders } from "./utils.ts";
 import {
   assertEquals,
   assertSpyCalls,
@@ -39,48 +34,6 @@ describe("stringifyHeaders", () => {
 
     table.forEach(([headers, expected]) => {
       assertEquals(stringifyHeaders(headers), expected);
-    });
-  });
-});
-
-describe("filterHeaders", () => {
-  it("should return fileted headers", () => {
-    const table: [Headers, string[], Headers][] = [
-      [new Headers(), [], new Headers()],
-      [new Headers({ a: "" }), [], new Headers()],
-      [new Headers({ a: "" }), ["a"], new Headers({ a: "" })],
-      [new Headers({ a: "a" }), ["a"], new Headers({ a: "a" })],
-      [new Headers({ a: "a" }), ["a", "b"], new Headers({ a: "a" })],
-      [
-        new Headers({ a: "aa", b: "bb" }),
-        ["a", "b"],
-        new Headers({ a: "aa", b: "bb" }),
-      ],
-      [
-        new Headers({ a: "aa", b: "bb" }),
-        ["b", "a"],
-        new Headers({ b: "bb", a: "aa" }),
-      ],
-      [
-        new Headers({ a: "aa", b: "bb" }),
-        ["c", "d", "f"],
-        new Headers({}),
-      ],
-    ];
-
-    table.forEach(([headers, fields, expected]) => {
-      assertEquals(filterHeaders(headers, fields), expected);
-    });
-  });
-
-  it("should throw error if the field name is invalid", () => {
-    const table: [Headers, string[]][] = [
-      [new Headers(), [""]],
-      [new Headers(), ["?"]],
-    ];
-
-    table.forEach(([headers, fields]) => {
-      assertThrows(() => filterHeaders(headers, fields));
     });
   });
 });

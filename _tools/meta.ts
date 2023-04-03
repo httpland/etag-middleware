@@ -6,7 +6,7 @@ export const makeOptions = (version: string): BuildOptions => ({
   compilerOptions: {
     lib: ["dom", "dom.iterable", "esnext"],
   },
-  typeCheck: false,
+  typeCheck: true,
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
   package: {
@@ -43,17 +43,19 @@ export const makeOptions = (version: string): BuildOptions => ({
       name: "@httpland/http-middleware",
       version: "1.0.0",
     },
-    "https://deno.land/x/isx@1.0.0-beta.24/mod.ts": {
-      name: "isxx",
-      version: "1.0.0-beta.24",
+    "https://deno.land/x/isx@1.1.1/is_string.ts": {
+      name: "@miyauci/isx",
+      version: "1.1.1",
+      subPath: "is_string",
     },
-    "https://deno.land/x/http_utils@1.0.0-beta.13/header.ts": {
+    "https://deno.land/x/http_utils@1.0.0/header.ts": {
       name: "@httpland/http-utils",
-      version: "1.0.0-beta.13",
-    },
-    "https://deno.land/x/etag_parser@1.0.0/mod.ts": {
-      name: "@httpland/etag-parser",
       version: "1.0.0",
+      subPath: "header.js",
+    },
+    "https://deno.land/x/etag_parser@1.1.0/mod.ts": {
+      name: "@httpland/etag-parser",
+      version: "1.1.0",
     },
   },
 });
