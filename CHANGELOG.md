@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/httpland/etag-middleware/compare/1.0.0...1.1.0) (2023-04-03)
+
+
+### Features
+
+* **deps:** update deps version ([84ed619](https://github.com/httpland/etag-middleware/commit/84ed619a4c0ff44bc6822feaae3134ff215d834e))
+
 # [1.1.0-beta.1](https://github.com/httpland/etag-middleware/compare/1.0.0...1.1.0-beta.1) (2023-04-02)
 
 
